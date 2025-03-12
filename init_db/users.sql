@@ -16,4 +16,4 @@ CREATE TABLE IF NOT EXISTS users (
 );
 
 INSERT INTO users (username, full_name, email, hashed_password, eur, usd, jpy) 
-VALUES ('dristic', 'Dusan Ristc', 'dristic@example.com', '$2b$12$EixZaYVK1fsbw1ZfbX3OXePaWxn96p36WQoeG6Lruj3vjPGga31lW"', 100, 20, 8000);
+VALUES ('dristic', 'Dusan Ristc', 'dristic@example.com', '$2b$12$EixZaYVK1fsbw1ZfbX3OXePaWxn96p36WQoeG6Lruj3vjPGga31lW', 100, 20, 8000);
