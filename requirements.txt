@@ -1,0 +1,8 @@
+fastapi[all]>=0.65.2
+uvicorn[standard]>=0.13.4
+PyJWT==2.10.0
+passlib[bcrypt]==1.7.4
+bcrypt==4.0.1
+httpx==0.24.1
+pytz==2023.3
+mysql-connector-python==8.0.28

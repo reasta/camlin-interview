@@ -1,0 +1,15 @@
+CREATE DATABASE IF NOT EXISTS camlin_db;
+
+USE camlin_db;
+
+CREATE TABLE IF NOT EXISTS rates (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    eur DECIMAL(20,4),
+    usd DECIMAL(20,4),
+    jpy DECIMAL(20,4),
+    valid INT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+
+INSERT INTO rates (eur, usd, jpy, valid) VALUES (100, 20, 8000, 1735689600);
