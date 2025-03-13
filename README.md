@@ -6,7 +6,7 @@ Camlin job Interview application
 ## Starting application local  
 
 
-Navgate to code folder, and crate virtual env
+Navigate to code folder, and create virtual env
 ```
 python -m venv env
 ```
@@ -21,12 +21,12 @@ Install dev requirements:
 pip install -r requirements-dev.txt  
 ```
 
-Install requirements(if not dev env):
+Install requirements (if not dev env):
 ```
 pip install -r requirements.txt       
 ```
 
-Run server by navigating to app/ folder and starting server:
+Run server by navigating to `app/` folder and starting server:
 ```
 cd app
 uvicorn main:app --reload
