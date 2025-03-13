@@ -2,8 +2,8 @@ from pydantic import BaseModel
 
 class User(BaseModel):
     username: str
-    email: str | None = None
-    full_name: str | None = None
+    email: str
+    full_name: str
     wallet: dict
 
 class UserInDB(User):
@@ -16,7 +16,7 @@ class Rates(BaseModel):
     eur: float
     usd: float
     jpy: float
-    total: float | None = None
+    total: float
 
 class Token(BaseModel):
     access_token: str

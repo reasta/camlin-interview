@@ -1,13 +1,31 @@
+import os
 import mysql.connector
 import time
 from fastapi import HTTPException
-from constants import DB_NAME, DB_UERNAME, DB_PASSWORD, RATES_LIST
+from constants import RATES_LIST
+
+DB_NAME = os.getenv('DB_NAME', '3306')
+DB_UERNAME = os.getenv('DB_USER', 'default_user')
+DB_PASSWORD = os.getenv('DB_PASSWORD', 'default_password')
 
 def validate_data(data, err_msg="Data not found"):
     if (data is not None):
         return data
     else:
         raise HTTPException(status_code=400, detail=err_msg)
+    
+def remap_user_wallet(user):
+    '''remaping user wallet data, to be better used later
+       mapping all currencies into dict 
+    '''
+    mapped_data = {'wallet':{}}
+    for key, value in user.items():
+        if key in RATES_LIST:
+            mapped_data['wallet'].update({key:float(value)})
+        else:
+            mapped_data[key] = value
+
+    return mapped_data
 
 def get_db_connection():
     conn = mysql.connector.connect(
@@ -19,6 +37,7 @@ def get_db_connection():
     return conn
 
 def get_user_data(username: str) -> dict:
+    '''Getting user information and returning mapped data'''
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
 
@@ -27,17 +46,11 @@ def get_user_data(username: str) -> dict:
     result = cursor.fetchone()
     result = validate_data(result, "User not found")
 
-    mapped_data = {'wallet':{}}
-
-    for key, value in result.items():
-        if key in RATES_LIST:
-            mapped_data['wallet'].update({key:float(value)})
-        else:
-            mapped_data[key] = value
+    mapped_data = remap_user_wallet(result)
 
     cursor.close()
     conn.close()
-    return mapped_data
+    return validate_data(mapped_data)
 
 def get_rates_data():
     conn = get_db_connection()
@@ -71,9 +84,9 @@ def update_rates_data(new_data, username):
     for x,y in new_data.items():
         cur, val = x, y 
 
-    query_tmp = "UPDATE users SET **CUR** = %s WHERE username = %s"
+    query_tmp = "UPDATE users SET **CUR** = %s"
     query = query_tmp.replace("**CUR**", cur)
-    cursor.execute(query, (val, username,))
+    cursor.execute(query, (val,))
     conn.commit()
 
     cursor.close()
@@ -86,7 +99,7 @@ async def update_rates(new_data):
 
     timestamp_int = int(time.time())
 
-    query = "UPDATE rates SET eur = %s, usd = %s, jpy = %s, valid = %s WHERE id = 1"
+    query = "UPDATE rates SET eur = %s, usd = %s, jpy = %s, valid = %s"
     cursor.execute(query, (new_data['eur'], new_data['usd'], new_data['jpy'], timestamp_int))
     conn.commit()
 

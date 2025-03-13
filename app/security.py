@@ -30,6 +30,7 @@ def authenticate_user(username: str, password: str):
         return False
     if not verify_password(password, user.hashed_password):
         return False
+    
     return user
 
 def create_access_token(data: dict, expires_delta: timedelta | None = None):
@@ -40,6 +41,7 @@ def create_access_token(data: dict, expires_delta: timedelta | None = None):
         expire = datetime.now(timezone.utc) + timedelta(minutes=15)
     to_encode.update({"exp": expire})
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+
     return encoded_jwt
 
 async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]):
@@ -59,4 +61,5 @@ async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]):
     user = get_user(token_data.username)
     if user is None:
         raise credentials_exception
+    
     return user

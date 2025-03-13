@@ -4,13 +4,13 @@ from fastapi import Depends, FastAPI, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
 from custom_types import User, Token
 from security import authenticate_user, create_access_token, get_current_user
-from rates import validate_wallet, calculate_wallet, add_to_wallet, sub_from_wallet
+from rates import validate_wallet_input, calculate_wallet, add_to_wallet, sub_from_wallet
 from constants import ACCESS_TOKEN_EXPIRE_MINUTES
 
 app = FastAPI()
 
 @app.post("/token", response_model=Token)
-# This function is taking a form data with username and password as an argument and returning a token.
+# This endpoint is taking a form data with username and password as an argument and returning a token.
 async def login_for_access_token(
     form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
 ) -> Token:
@@ -30,11 +30,11 @@ async def login_for_access_token(
 @app.get("/wallet")
 async def get_wallet(
     current_user: Annotated[User, Depends(get_current_user)],
-    ):
+):
     '''This API is returning the wallet for value in EUR, USD and JPY converted to PLN. As well as the total value of the wallet in PLN'''
     return {"Wallet": await calculate_wallet(current_user.wallet)}
 
-@app.get("/wallet/add/{currency}/{amount}", dependencies=[Depends(validate_wallet)])
+@app.post("/wallet/add/{currency}/{amount}", dependencies=[Depends(validate_wallet_input)])
 async def insert_into_wallet(
     currency: str,
     amount: int,
@@ -45,7 +45,7 @@ async def insert_into_wallet(
     ret = await calculate_wallet(current_user.wallet)
     return ret
 
-@app.get("/wallet/sub/{currency}/{amount}", dependencies=[Depends(validate_wallet)])
+@app.post("/wallet/sub/{currency}/{amount}", dependencies=[Depends(validate_wallet_input)])
 async def substract_from_wallet(
     currency: str,
     amount: int,
